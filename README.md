@@ -5,9 +5,9 @@ One-click validator installer for Pezkuwi testnet. Cross-platform scripts for au
 ## 🚀 Quick Start
 
 ### Linux / macOS (One-Line Install)
-```bash
+bash
 curl -sSf https://raw.githubusercontent.com/pezkuwichain/pezkuwi-validator-v1.0.0/main/scripts/linux/install-validator.sh | bash
-```
+
 
 **⚠️ Note:** This will install Pezkuwi validator to `~/.pezkuwi/` directory.
 
@@ -19,19 +19,19 @@ curl -sSf https://raw.githubusercontent.com/pezkuwichain/pezkuwi-validator-v1.0.
 - **Validator Keys**: Automatically generated
 
 ### Test Installation (Dry Run)
-```bash
+bash
 # Download script and review it first
 wget https://raw.githubusercontent.com/pezkuwichain/pezkuwi-validator-v1.0.0/main/scripts/linux/install-validator.sh
 less install-validator.sh
 bash install-validator.sh
-```
+
 
 ### Windows (PowerShell)
 
 **⚠️ Run as Administrator**
-```powershell
+powershell
 iwr -useb https://raw.githubusercontent.com/pezkuwichain/pezkuwi-validator-v1.0.0/main/scripts/windows/install-validator.ps1 | iex
-```
+
 
 **What Gets Installed?**
 
@@ -41,7 +41,7 @@ iwr -useb https://raw.githubusercontent.com/pezkuwichain/pezkuwi-validator-v1.0.
 - **Firewall**: Ports 30333 and 9944 (manual configuration may be required)
 
 **Manual Installation (if one-liner fails):**
-```powershell
+powershell
 # Download script
 Invoke-WebRequest -Uri "https://raw.githubusercontent.com/pezkuwichain/pezkuwi-validator-v1.0.0/main/scripts/windows/install-validator.ps1" -OutFile "install-validator.ps1"
 
@@ -50,12 +50,39 @@ notepad install-validator.ps1
 
 # Run as Administrator
 .\install-validator.ps1
-```
+
 
 **Check Service Status:**
-```powershell
+powershell
 Get-Service PezkuwiValidator
-```
+
+
+### Docker (Recommended for Production)
+
+**Prerequisites:** Docker 20.10+ and Docker Compose 2.0+
+bash
+# Clone repository
+git clone https://github.com/pezkuwichain/pezkuwi-validator-v1.0.0.git
+cd pezkuwi-validator-v1.0.0/docker
+
+# Start validator
+docker-compose up -d
+
+# View logs
+docker-compose logs -f pezkuwi-validator
+
+
+**With Monitoring (Prometheus + Grafana):**
+bash
+docker-compose --profile monitoring up -d
+
+
+**Access:**
+- Validator RPC: http://localhost:9944
+- Prometheus: http://localhost:9090
+- Grafana: http://localhost:3000 (admin/pezkuwi123)
+
+📚 **Full Docker documentation:** [docker/README.md](./docker/README.md)
 
 ## 📋 Prerequisites
 
@@ -80,42 +107,42 @@ Get-Service PezkuwiValidator
 ## 📊 Post-Installation
 
 ### Check Node Status
-```bash
+bash
 sudo systemctl status pezkuwi-validator
-```
+
 
 ### View Live Logs
-```bash
+bash
 sudo journalctl -u pezkuwi-validator -f
-```
+
 
 ### Stop Validator
-```bash
+bash
 sudo systemctl stop pezkuwi-validator
-```
+
 
 ### Restart Validator
-```bash
+bash
 sudo systemctl restart pezkuwi-validator
-```
+
 
 ## 📁 Installation Directory
 
 All files are installed to: `~/.pezkuwi/`
-```
+
 ~/.pezkuwi/
 ├── bin/              # Binaries
 ├── config/           # Chain spec
 ├── data/             # Blockchain data
 └── keys/             # Validator keys
-```
+
 
 ## 🔑 Your Validator Keys
 
 After installation, your node ID is saved in:
-```bash
+bash
 cat ~/.pezkuwi/keys/node-id.txt
-```
+
 
 **⚠️ IMPORTANT**: Backup this file! You'll need it for testnet registration.
 
@@ -125,29 +152,29 @@ cat ~/.pezkuwi/keys/node-id.txt
 - **WebSocket**: `ws://localhost:9944`
 
 Test connection:
-```bash
+bash
 curl -H "Content-Type: application/json" \
      -d '{"id":1, "jsonrpc":"2.0", "method": "system_health"}' \
      http://localhost:9944
-```
+
 
 ## 🆘 Troubleshooting
 
 ### Node Not Starting
-```bash
+bash
 # Check logs
 sudo journalctl -u pezkuwi-validator -n 100
 
 # Check service status
 sudo systemctl status pezkuwi-validator
-```
+
 
 ### Firewall Issues
-```bash
+bash
 # Open required ports (Ubuntu/Debian)
 sudo ufw allow 30333/tcp
 sudo ufw allow 9944/tcp
-```
+
 
 ## 📚 Documentation
 

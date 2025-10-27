@@ -1,0 +1,11 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: 'pezkuwi-validator'
+    static_configs:
+      - targets: ['pezkuwi-validator:9615']
+        labels:
+          instance: 'validator-1'
+          network: 'pezkuwi-testnet'
