@@ -27,8 +27,34 @@ bash install-validator.sh
 ```
 
 ### Windows (PowerShell)
+
+**⚠️ Run as Administrator**
 ```powershell
-# Coming soon
+iwr -useb https://raw.githubusercontent.com/pezkuwichain/pezkuwi-validator-v1.0.0/main/scripts/windows/install-validator.ps1 | iex
+```
+
+**What Gets Installed?**
+
+- **Binaries**: pezkuwi.exe, pezkuwi-prepare-worker.exe, pezkuwi-execute-worker.exe
+- **Windows Service**: PezkuwiValidator (auto-start enabled)
+- **Dependencies**: Chocolatey, NSSM (service manager)
+- **Firewall**: Ports 30333 and 9944 (manual configuration may be required)
+
+**Manual Installation (if one-liner fails):**
+```powershell
+# Download script
+Invoke-WebRequest -Uri "https://raw.githubusercontent.com/pezkuwichain/pezkuwi-validator-v1.0.0/main/scripts/windows/install-validator.ps1" -OutFile "install-validator.ps1"
+
+# Review script
+notepad install-validator.ps1
+
+# Run as Administrator
+.\install-validator.ps1
+```
+
+**Check Service Status:**
+```powershell
+Get-Service PezkuwiValidator
 ```
 
 ## 📋 Prerequisites
