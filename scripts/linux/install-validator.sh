@@ -78,13 +78,17 @@ download_binaries() {
     mkdir -p "$INSTALL_DIR/bin"
     
     RELEASE_URL="https://github.com/${GITHUB_REPO}/releases/download/${PEZKUWI_VERSION}"
+    ARCHIVE_NAME="pezkuwi-binaries-linux-x86_64.tar.gz"
     
-    wget -q --show-progress -O "$INSTALL_DIR/bin/pezkuwi" "${RELEASE_URL}/pezkuwi" || {
+    # Download tar.gz archive
+    wget -q --show-progress -O "/tmp/${ARCHIVE_NAME}" "${RELEASE_URL}/${ARCHIVE_NAME}" || {
         print_error "Failed to download binaries"
         print_info "Please check if release exists: ${RELEASE_URL}"
         exit 1
     }
-    
+    # Extract binaries
+    tar -xzf "/tmp/${ARCHIVE_NAME}" -C "$INSTALL_DIR/bin/"
+    rm "/tmp/${ARCHIVE_NAME}"
     chmod +x "$INSTALL_DIR/bin/pezkuwi"
     print_success "Binaries downloaded"
 }
