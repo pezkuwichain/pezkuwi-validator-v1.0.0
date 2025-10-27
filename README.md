@@ -9,6 +9,23 @@ One-click validator installer for Pezkuwi testnet. Cross-platform scripts for au
 curl -sSf https://raw.githubusercontent.com/pezkuwichain/pezkuwi-validator-v1.0.0/main/scripts/linux/install-validator.sh | bash
 ```
 
+**⚠️ Note:** This will install Pezkuwi validator to `~/.pezkuwi/` directory.
+
+### What Gets Installed?
+
+- **Binaries**: pezkuwi, pezkuwi-prepare-worker, pezkuwi-execute-worker (67 MB)
+- **Chain Spec**: Testnet configuration
+- **Systemd Service**: Auto-restart on failure
+- **Validator Keys**: Automatically generated
+
+### Test Installation (Dry Run)
+```bash
+# Download script and review it first
+wget https://raw.githubusercontent.com/pezkuwichain/pezkuwi-validator-v1.0.0/main/scripts/linux/install-validator.sh
+less install-validator.sh
+bash install-validator.sh
+```
+
 ### Windows (PowerShell)
 ```powershell
 # Coming soon
@@ -26,11 +43,13 @@ curl -sSf https://raw.githubusercontent.com/pezkuwichain/pezkuwi-validator-v1.0.
 
 1. ✅ Checks system requirements
 2. ✅ Installs dependencies
-3. ✅ Downloads Pezkuwi binaries from GitHub Releases
-4. ✅ Downloads chain specification
-5. ✅ Generates validator keys
-6. ✅ Creates systemd service
-7. ✅ Starts validator node
+3. ✅ Downloads Pezkuwi binaries from GitHub Releases (67 MB compressed)
+4. ✅ Extracts binaries to `~/.pezkuwi/bin/`
+5. ✅ Downloads chain specification
+6. ✅ Generates validator keys automatically
+7. ✅ Creates systemd service (auto-restart enabled)
+8. ✅ Starts validator node
+9. ✅ Displays node ID and useful commands
 
 ## 📊 Post-Installation
 
