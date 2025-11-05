@@ -202,32 +202,31 @@ install_dependencies() {
     echo -e "\n${GREEN}✓ All dependencies installed!${NC}"
 }
 
-# Clone and build Pezkuwi-SDK
+# Clone and build pezkuwi-sdk
 setup_sdk() {
-    print_header "Setting up Pezkuwi-SDK"
+    print_header "Setting up pezkuwi-sdk"
 
     mkdir -p "$SHARED_DIR"
     cd "$SHARED_DIR"
 
-    if [ -d "Pezkuwi-SDK" ]; then
-        echo -e "${YELLOW}Pezkuwi-SDK already exists. Updating...${NC}"
-        cd Pezkuwi-SDK
+    if [ -d "pezkuwi-sdk" ]; then
+        echo -e "${YELLOW}pezkuwi-sdk already exists. Updating...${NC}"
+        cd pezkuwi-sdk
         git fetch origin
         git pull origin main || git pull origin master
     else
-        echo "Cloning Pezkuwi-SDK from GitHub..."
-        # TODO: Replace with actual repository URL
-        git clone https://github.com/YOUR_USERNAME/Pezkuwi-SDK.git
-        cd Pezkuwi-SDK
+        echo "Cloning pezkuwi-sdk from GitHub..."
+        git clone https://github.com/pezkuwichain/pezkuwi-sdk.git
+        cd pezkuwi-sdk
     fi
 
-    echo -e "\n${YELLOW}Building Pezkuwi-SDK (Release mode)...${NC}"
+    echo -e "\n${YELLOW}Building pezkuwi-sdk (Release mode)...${NC}"
     echo "This may take 15-30 minutes..."
 
     # Build the node in release mode
     cargo build --release
 
-    echo -e "${GREEN}✓ Pezkuwi-SDK built successfully${NC}"
+    echo -e "${GREEN}✓ pezkuwi-sdk built successfully${NC}"
 }
 
 # Clone and build DKSweb frontend
@@ -244,7 +243,7 @@ setup_frontend() {
     else
         echo "Cloning DKSweb from GitHub..."
         # TODO: Replace with actual repository URL
-        git clone https://github.com/YOUR_USERNAME/DKSweb.git
+        git clone https://github.com/pezkuwichain/DKSweb.git
         cd DKSweb
     fi
 
@@ -289,7 +288,7 @@ PROMETHEUS_PORT=$PROMETHEUS_PORT
 DATA_DIR=$VALIDATOR_DIR/data
 KEYS_DIR=$VALIDATOR_DIR/keys
 LOGS_DIR=$VALIDATOR_DIR/logs
-SDK_PATH=$SHARED_DIR/Pezkuwi-SDK
+SDK_PATH=$SHARED_DIR/pezkuwi-sdk
 FRONTEND_PATH=$SHARED_DIR/DKSweb
 EOF
 
@@ -323,7 +322,7 @@ Type=simple
 User=$USER
 WorkingDirectory=$VALIDATOR_DIR
 EnvironmentFile=$VALIDATOR_DIR/config/validator.conf
-ExecStart=$SHARED_DIR/Pezkuwi-SDK/target/release/pezkuwi-node \\
+ExecStart=$SHARED_DIR/pezkuwi-sdk/target/release/pezkuwi-node \\
     --base-path $VALIDATOR_DIR/data \\
     --chain local \\
     --validator \\
@@ -421,7 +420,7 @@ SHARED_DIR="$SCRIPT_DIR/../shared"
 echo "Checking for updates..."
 
 # Update SDK
-cd "$SHARED_DIR/Pezkuwi-SDK"
+cd "$SHARED_DIR/pezkuwi-sdk"
 git fetch origin
 if [ $(git rev-parse HEAD) != $(git rev-parse @{u}) ]; then
     echo "SDK updates found. Rebuilding..."
@@ -477,7 +476,7 @@ main() {
     fi
 
     # Setup shared components (only if not already done)
-    if [ ! -d "$SHARED_DIR/Pezkuwi-SDK/target/release" ]; then
+    if [ ! -d "$SHARED_DIR/pezkuwi-sdk/target/release" ]; then
         setup_sdk
     else
         echo -e "\n${GREEN}✓ SDK already built${NC}"
