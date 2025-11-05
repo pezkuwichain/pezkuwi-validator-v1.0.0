@@ -216,7 +216,7 @@ setup_sdk() {
         git pull origin main || git pull origin master
     else
         echo "Cloning pezkuwi-sdk from GitHub..."
-        git clone https://github.com/pezkuwichain/pezkuwi-sdk.git
+        git clone --depth 1 https://github.com/pezkuwichain/pezkuwi-sdk.git
         cd pezkuwi-sdk
     fi
 
@@ -243,7 +243,7 @@ setup_frontend() {
     else
         echo "Cloning DKSweb from GitHub..."
         # TODO: Replace with actual repository URL
-        git clone https://github.com/pezkuwichain/DKSweb.git
+        git clone --depth 1 https://github.com/pezkuwichain/DKSweb.git
         cd DKSweb
     fi
 
