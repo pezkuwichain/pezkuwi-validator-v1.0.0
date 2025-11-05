@@ -150,8 +150,6 @@ check_dependencies() {
     if ! check_dependency "nginx" "Nginx" "nginx -v"; then
         missing_deps+=("nginx")
     fi
-
-    return ${#missing_deps[@]}
 }
 
 # Install missing dependencies
@@ -457,8 +455,8 @@ main() {
     get_validator_number "$1"
 
     # Check dependencies
-    check_dependencies
-    local dep_count=$?
+    check_dependencies || true
+    local dep_count=${#missing_deps[@]}
 
     # Install missing dependencies if any
     if [ $dep_count -gt 0 ] || [ $RUST_MISSING -eq 1 ] || [ $NODE_MISSING -eq 1 ]; then
