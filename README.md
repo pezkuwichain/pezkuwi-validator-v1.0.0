@@ -1,197 +1,355 @@
-# Pezkuwi Validator Installer
+# Pezkuwi Beta Testnet - Validator Package v2.0.0
 
-One-click validator installer for Pezkuwi testnet. Cross-platform scripts for automated node deployment.
+Simplified validator setup package for Pezkuwi blockchain beta testnet with 8 validators running on a single machine.
 
-## 🚀 Quick Start
+## Features
 
-### Linux / macOS (One-Line Install)
-bash
-curl -sSf https://raw.githubusercontent.com/pezkuwichain/pezkuwi-validator-v1.0.0/main/scripts/linux/install-validator.sh | bash
+- **One-command setup** - Automated installation and configuration
+- **Automatic dependency checking** - Detects and guides installation of required tools
+- **Shared SDK build** - Single Pezkuwi-SDK build shared across all validators
+- **Single DKSweb frontend** - One frontend instance with auto-update from GitHub
+- **Real validator keys** - Pre-configured with actual beta testnet validator keys
+- **Systemd service management** - Easy start/stop/restart with systemd
+- **Helper scripts** - Convenient management scripts for all validators
+- **Nginx deployment** - Production-ready frontend deployment
 
+## System Requirements
 
-**⚠️ Note:** This will install Pezkuwi validator to `~/.pezkuwi/` directory.
+### Required Dependencies
+- **Git** - Version control
+- **Rust & Cargo** - Substrate/Polkadot SDK compilation
+- **Node.js & npm** - Frontend build (v16+ recommended)
+- **Build tools** - build-essential, cmake, clang, libssl-dev, pkg-config
+- **Nginx** - Frontend web server
+- **Systemd** - Service management (included in Ubuntu)
 
-### What Gets Installed?
+### Recommended System
+- **OS**: Ubuntu 20.04 LTS or newer
+- **CPU**: 4+ cores
+- **RAM**: 8GB+
+- **Storage**: 50GB+ SSD
+- **Network**: Stable internet connection
 
-- **Binaries**: pezkuwi, pezkuwi-prepare-worker, pezkuwi-execute-worker (67 MB)
-- **Chain Spec**: Testnet configuration
-- **Systemd Service**: Auto-restart on failure
-- **Validator Keys**: Automatically generated
+## Directory Structure
 
-### Test Installation (Dry Run)
-bash
-# Download script and review it first
-wget https://raw.githubusercontent.com/pezkuwichain/pezkuwi-validator-v1.0.0/main/scripts/linux/install-validator.sh
-less install-validator.sh
-bash install-validator.sh
+```
+beta_testnet/
+├── README.md                      # This file
+├── setup.sh                       # Main setup script
+├── config/                        # Global configuration
+├── scripts/                       # Helper scripts
+│   ├── start.sh                  # Start individual validator
+│   ├── stop.sh                   # Stop individual validator
+│   ├── status.sh                 # Check validator status
+│   └── logs.sh                   # View validator logs
+├── validators/                    # Validator-specific data
+│   ├── validator1/
+│   │   ├── config/
+│   │   │   └── keys.sh          # Validator 1 keys (RPC: 9944, Bootnode)
+│   │   ├── data/                # Blockchain data
+│   │   ├── keys/                # Keystore
+│   │   └── logs/                # Log files
+│   ├── validator2/              # RPC: 9945, P2P: 30334
+│   ├── validator3/              # RPC: 9946, P2P: 30335
+│   ├── validator4/              # RPC: 9947, P2P: 30336
+│   ├── validator5/              # RPC: 9948, P2P: 30337
+│   ├── validator6/              # RPC: 9949, P2P: 30338
+│   ├── validator7/              # RPC: 9950, P2P: 30339
+│   └── validator8/              # RPC: 9951, P2P: 30340
+├── shared/                       # Shared resources
+│   ├── pezkuwi-sdk/             # Shared SDK build
+│   └── dksweb/                  # Shared frontend
+└── systemd/                      # Systemd service templates
 
+```
 
-### Windows (PowerShell)
+## Port Allocation
 
-**⚠️ Run as Administrator**
-powershell
-iwr -useb https://raw.githubusercontent.com/pezkuwichain/pezkuwi-validator-v1.0.0/main/scripts/windows/install-validator.ps1 | iex
+| Validator | RPC Port | P2P Port | WS Port | Prometheus |
+|-----------|----------|----------|---------|------------|
+| 1 (Boot)  | 9944     | 30333    | 9944    | 9615       |
+| 2         | 9945     | 30334    | 9945    | 9616       |
+| 3         | 9946     | 30335    | 9946    | 9617       |
+| 4         | 9947     | 30336    | 9947    | 9618       |
+| 5         | 9948     | 30337    | 9948    | 9619       |
+| 6         | 9949     | 30338    | 9949    | 9620       |
+| 7         | 9950     | 30339    | 9950    | 9621       |
+| 8         | 9951     | 30340    | 9951    | 9622       |
 
+## Quick Start
 
-**What Gets Installed?**
+### 1. Initial Setup
 
-- **Binaries**: pezkuwi.exe, pezkuwi-prepare-worker.exe, pezkuwi-execute-worker.exe
-- **Windows Service**: PezkuwiValidator (auto-start enabled)
-- **Dependencies**: Chocolatey, NSSM (service manager)
-- **Firewall**: Ports 30333 and 9944 (manual configuration may be required)
+Run the main setup script with a validator number (1-8):
 
-**Manual Installation (if one-liner fails):**
-powershell
-# Download script
-Invoke-WebRequest -Uri "https://raw.githubusercontent.com/pezkuwichain/pezkuwi-validator-v1.0.0/main/scripts/windows/install-validator.ps1" -OutFile "install-validator.ps1"
+```bash
+cd /home/mamostehp/pezkuwi-validator-v2.0.0/beta_testnet
+sudo ./setup.sh 1
+```
 
-# Review script
-notepad install-validator.ps1
+This will:
+- Check all dependencies
+- Clone/update Pezkuwi-SDK (if needed)
+- Build SDK in release mode (shared build)
+- Clone/update DKSweb frontend (if needed)
+- Build and deploy frontend with Nginx
+- Insert validator keys
+- Create systemd service
+- Start the validator
 
-# Run as Administrator
-.\install-validator.ps1
+### 2. Setup Additional Validators
 
+```bash
+sudo ./setup.sh 2
+sudo ./setup.sh 3
+# ... up to 8
+```
 
-**Check Service Status:**
-powershell
-Get-Service PezkuwiValidator
+### 3. Verify All Validators Are Running
 
+```bash
+./scripts/status.sh
+```
 
-### Docker (Recommended for Production)
+## Helper Scripts Usage
 
-**Prerequisites:** Docker 20.10+ and Docker Compose 2.0+
-bash
-# Clone repository
-git clone https://github.com/pezkuwichain/pezkuwi-validator-v1.0.0.git
-cd pezkuwi-validator-v1.0.0/docker
+### Start Validator
 
-# Start validator
-docker-compose up -d
+Start a single validator:
+```bash
+./scripts/start.sh 1
+```
 
-# View logs
-docker-compose logs -f pezkuwi-validator
-
-
-**With Monitoring (Prometheus + Grafana):**
-bash
-docker-compose --profile monitoring up -d
-
-
-**Access:**
-- Validator RPC: http://localhost:9944
-- Prometheus: http://localhost:9090
-- Grafana: http://localhost:3000 (admin/pezkuwi123)
-
-📚 **Full Docker documentation:** [docker/README.md](./docker/README.md)
-
-## 📋 Prerequisites
-
-- **OS**: Linux (Ubuntu 20.04+, Debian 11+, Fedora 35+)
-- **CPU**: Minimum 2 cores (4+ recommended)
-- **RAM**: Minimum 4GB (8GB+ recommended)
-- **Storage**: 50GB+ free space
-- **Network**: Public IP with ports 30333 (P2P) and 9944 (RPC) open
-
-## 🔧 What Does the Installer Do?
-
-1. ✅ Checks system requirements
-2. ✅ Installs dependencies
-3. ✅ Downloads Pezkuwi binaries from GitHub Releases (67 MB compressed)
-4. ✅ Extracts binaries to `~/.pezkuwi/bin/`
-5. ✅ Downloads chain specification
-6. ✅ Generates validator keys automatically
-7. ✅ Creates systemd service (auto-restart enabled)
-8. ✅ Starts validator node
-9. ✅ Displays node ID and useful commands
-
-## 📊 Post-Installation
-
-### Check Node Status
-bash
-sudo systemctl status pezkuwi-validator
-
-
-### View Live Logs
-bash
-sudo journalctl -u pezkuwi-validator -f
-
+Start all validators:
+```bash
+for i in {1..8}; do ./scripts/start.sh $i; done
+```
 
 ### Stop Validator
-bash
-sudo systemctl stop pezkuwi-validator
 
+Stop a single validator:
+```bash
+./scripts/stop.sh 1
+```
 
-### Restart Validator
-bash
-sudo systemctl restart pezkuwi-validator
+Stop all validators:
+```bash
+for i in {1..8}; do ./scripts/stop.sh $i; done
+```
 
+### Check Status
 
-## 📁 Installation Directory
+Check single validator:
+```bash
+./scripts/status.sh 1
+```
 
-All files are installed to: `~/.pezkuwi/`
+Check all validators:
+```bash
+./scripts/status.sh
+```
 
-~/.pezkuwi/
-├── bin/              # Binaries
-├── config/           # Chain spec
-├── data/             # Blockchain data
-└── keys/             # Validator keys
+### View Logs
 
+View logs for a validator:
+```bash
+./scripts/logs.sh 1
+```
 
-## 🔑 Your Validator Keys
+Follow logs in real-time:
+```bash
+./scripts/logs.sh 1 follow
+```
 
-After installation, your node ID is saved in:
-bash
-cat ~/.pezkuwi/keys/node-id.txt
+## Systemd Service Management
 
+Validators are managed as systemd services:
 
-**⚠️ IMPORTANT**: Backup this file! You'll need it for testnet registration.
+```bash
+# Start validator
+sudo systemctl start pezkuwi-validator-1
 
-## 🌐 Connect to Your Node
+# Stop validator
+sudo systemctl stop pezkuwi-validator-1
 
-- **RPC Endpoint**: `http://localhost:9944`
-- **WebSocket**: `ws://localhost:9944`
+# Restart validator
+sudo systemctl restart pezkuwi-validator-1
 
-Test connection:
-bash
+# Check status
+sudo systemctl status pezkuwi-validator-1
+
+# View logs
+sudo journalctl -u pezkuwi-validator-1 -f
+
+# Enable auto-start on boot
+sudo systemctl enable pezkuwi-validator-1
+
+# Disable auto-start
+sudo systemctl disable pezkuwi-validator-1
+```
+
+## Validator Keys
+
+Each validator has 6 types of keys pre-configured in `validators/validatorN/config/keys.sh`:
+
+- **BABE** - Block authorship (sr25519)
+- **GRANDPA** - Finality (ed25519)
+- **PARA** - Parachain validation (sr25519)
+- **ASGN** - Assignment (sr25519)
+- **AUDI** - Authority discovery (sr25519)
+- **BEEF** - BEEFY consensus (ecdsa)
+
+**SECURITY WARNING**: These keys are for beta testnet only. Never use testnet keys in production!
+
+## Frontend Access
+
+After setup, DKSweb frontend is available at:
+- **Local**: http://localhost (via Nginx)
+- **Network**: http://YOUR_SERVER_IP
+
+The frontend connects to validator 1 (bootnode) by default at `ws://127.0.0.1:9944`.
+
+## Troubleshooting
+
+### Validator Won't Start
+
+Check logs:
+```bash
+./scripts/logs.sh 1
+# or
+sudo journalctl -u pezkuwi-validator-1 -n 100
+```
+
+Common issues:
+- Port already in use
+- Keys not inserted properly
+- Insufficient permissions
+- Blockchain data corruption
+
+### Port Already in Use
+
+Check what's using the port:
+```bash
+sudo lsof -i :9944
+```
+
+Kill the process:
+```bash
+sudo kill -9 <PID>
+```
+
+### Clear Blockchain Data
+
+To reset a validator's blockchain data:
+```bash
+sudo systemctl stop pezkuwi-validator-1
+rm -rf /home/mamostehp/pezkuwi-validator-v2.0.0/beta_testnet/validators/validator1/data/*
+sudo systemctl start pezkuwi-validator-1
+```
+
+### Rebuild SDK
+
+If you need to rebuild the SDK:
+```bash
+cd /home/mamostehp/pezkuwi-validator-v2.0.0/beta_testnet/shared/pezkuwi-sdk
+cargo clean
+cargo build --release
+```
+
+### Frontend Not Loading
+
+Check Nginx status:
+```bash
+sudo systemctl status nginx
+```
+
+Check Nginx logs:
+```bash
+sudo tail -f /var/log/nginx/error.log
+```
+
+Restart Nginx:
+```bash
+sudo systemctl restart nginx
+```
+
+### Re-insert Keys
+
+If keys need to be re-inserted:
+```bash
+cd /home/mamostehp/pezkuwi-validator-v2.0.0/beta_testnet
+source validators/validator1/config/keys.sh
+
+# Insert each key type
 curl -H "Content-Type: application/json" \
-     -d '{"id":1, "jsonrpc":"2.0", "method": "system_health"}' \
-     http://localhost:9944
+  -d "{\"id\":1,\"jsonrpc\":\"2.0\",\"method\":\"author_insertKey\",\"params\":[\"babe\",\"$BABE_SEED\",\"$BABE_PUBLIC_KEY\"]}" \
+  http://127.0.0.1:9944
+```
 
+## Network Information
 
-## 🆘 Troubleshooting
+- **Network**: Pezkuwi Beta Testnet
+- **Chain Spec**: pezkuwichain-beta-testnet
+- **Genesis**: Same across all validators
+- **Bootnode**: Validator 1 (127.0.0.1:30333)
 
-### Node Not Starting
-bash
-# Check logs
-sudo journalctl -u pezkuwi-validator -n 100
+## Maintenance
 
-# Check service status
-sudo systemctl status pezkuwi-validator
+### Update SDK
 
+```bash
+cd /home/mamostehp/pezkuwi-validator-v2.0.0/beta_testnet/shared/pezkuwi-sdk
+git pull origin main
+cargo build --release
 
-### Firewall Issues
-bash
-# Open required ports (Ubuntu/Debian)
-sudo ufw allow 30333/tcp
-sudo ufw allow 9944/tcp
+# Restart all validators
+for i in {1..8}; do sudo systemctl restart pezkuwi-validator-$i; done
+```
 
+### Update Frontend
 
-## 📚 Documentation
+```bash
+cd /home/mamostehp/pezkuwi-validator-v2.0.0/beta_testnet/shared/dksweb
+git pull origin main
+npm install
+npm run build
+sudo systemctl restart nginx
+```
 
-- [Validator Guide](./docs/VALIDATOR-GUIDE.md)
-- [Troubleshooting](./docs/TROUBLESHOOTING.md)
-- [FAQ](./docs/FAQ.md)
+### Backup Validator Keys
 
-## 🤝 Support
+```bash
+# Backup all validator keys
+tar -czf validator-keys-backup.tar.gz validators/validator*/config/keys.sh
 
-- GitHub Issues: https://github.com/pezkuwichain/pezkuwi-validator-v1.0.0/issues
-- Telegram: https://t.me/pezkuwichain
-- Discord: Coming soon
+# Copy to safe location
+cp validator-keys-backup.tar.gz /backup/location/
+```
 
-## 📜 License
+## Security Best Practices
 
-GNU General Public License v3.0
+1. **Never expose RPC ports to public internet** - Use firewall rules
+2. **Backup validator keys securely** - Store encrypted backups offline
+3. **Use different keys for production** - Never reuse testnet keys
+4. **Keep system updated** - Regular security updates
+5. **Monitor validator logs** - Watch for suspicious activity
+6. **Restrict SSH access** - Use key-based authentication only
+7. **Run validators as non-root** - Use dedicated user accounts
+
+## Support
+
+For issues or questions:
+- Check logs first: `./scripts/logs.sh <validator_num>`
+- Review this README
+- Check validator status: `./scripts/status.sh`
+- Consult Pezkuwi documentation
+
+## License
+
+This validator package is part of the Pezkuwi blockchain project.
 
 ---
 
-**Made with ❤️ by Kurdistan Tech Ministry**
+**Last Updated**: 2025-11-05
+**Package Version**: 2.0.0
+**Network**: Beta Testnet (8 Validators)
