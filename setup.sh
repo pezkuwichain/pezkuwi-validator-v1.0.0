@@ -66,11 +66,16 @@ get_validator_number() {
     echo -e "${GREEN}Setting up Validator $VALIDATOR_NUM${NC}"
 }
 
+# Global variables for dependencies
+missing_deps=()
+RUST_MISSING=0
+NODE_MISSING=0
+
 # Check system dependencies
 check_dependencies() {
     print_header "Checking System Dependencies"
 
-    local missing_deps=()
+    missing_deps=()
 
     # Essential build tools
     if ! check_dependency "git" "Git" "git --version"; then
