@@ -169,12 +169,22 @@ install_dependencies() {
     # Install Rust if missing
     if [ $RUST_MISSING -eq 1 ]; then
         echo -e "\n${YELLOW}Installing Rust...${NC}"
-        curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
-        source "$HOME/.cargo/env"
+        echo "This may take a few minutes. Please wait..."
+        curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --verbose
+
+        # Source cargo env
+        if [ -f "$HOME/.cargo/env" ]; then
+            source "$HOME/.cargo/env"
+        fi
+
+        echo -e "\n${YELLOW}Configuring Rust toolchain...${NC}"
         rustup default stable
         rustup update
+
+        echo -e "\n${YELLOW}Adding WebAssembly target...${NC}"
         rustup target add wasm32-unknown-unknown
-        echo -e "${GREEN}✓ Rust installed${NC}"
+
+        echo -e "${GREEN}✓ Rust installed successfully${NC}"
     else
         # Ensure wasm target is installed
         echo -e "\n${YELLOW}Ensuring wasm32-unknown-unknown target...${NC}"
