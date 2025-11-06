@@ -412,6 +412,7 @@ setup_service() {
     NODE_ARGS="$NODE_ARGS --prometheus-port $PROMETHEUS_PORT"
     NODE_ARGS="$NODE_ARGS --rpc-cors all"
     NODE_ARGS="$NODE_ARGS --rpc-external"
+    NODE_ARGS="$NODE_ARGS --unsafe-force-node-key-generation"
 
     if [ -n "$BOOTNODE_ARG" ]; then
         NODE_ARGS="$NODE_ARGS $BOOTNODE_ARG"
