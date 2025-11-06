@@ -170,25 +170,30 @@ install_dependencies() {
     if [ $RUST_MISSING -eq 1 ]; then
         echo -e "\n${YELLOW}Installing Rust...${NC}"
         echo "This may take a few minutes. Please wait..."
-        curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --verbose
 
-        # Source cargo env
-        if [ -f "$HOME/.cargo/env" ]; then
-            source "$HOME/.cargo/env"
-        fi
+        # Detect actual user (not root when using sudo)
+        ACTUAL_USER=${SUDO_USER:-$USER}
+        ACTUAL_HOME=$(eval echo ~$ACTUAL_USER)
 
+        echo "Installing Rust for user: $ACTUAL_USER"
+
+        # Install Rust as the actual user
+        su - $ACTUAL_USER -c 'curl --proto "=https" --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --verbose'
+
+        # Configure Rust toolchain as the actual user
         echo -e "\n${YELLOW}Configuring Rust toolchain...${NC}"
-        rustup default stable
-        rustup update
+        su - $ACTUAL_USER -c 'source $HOME/.cargo/env && rustup default stable'
+        su - $ACTUAL_USER -c 'source $HOME/.cargo/env && rustup update'
 
         echo -e "\n${YELLOW}Adding WebAssembly target...${NC}"
-        rustup target add wasm32-unknown-unknown
+        su - $ACTUAL_USER -c 'source $HOME/.cargo/env && rustup target add wasm32-unknown-unknown'
 
-        echo -e "${GREEN}✓ Rust installed successfully${NC}"
+        echo -e "${GREEN}✓ Rust installed successfully for $ACTUAL_USER${NC}"
     else
         # Ensure wasm target is installed
         echo -e "\n${YELLOW}Ensuring wasm32-unknown-unknown target...${NC}"
-        rustup target add wasm32-unknown-unknown 2>/dev/null || true
+        ACTUAL_USER=${SUDO_USER:-$USER}
+        su - $ACTUAL_USER -c 'source $HOME/.cargo/env && rustup target add wasm32-unknown-unknown 2>/dev/null' || true
     fi
 
     # Install Node.js if missing
