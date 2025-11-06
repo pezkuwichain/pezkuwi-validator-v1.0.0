@@ -228,8 +228,13 @@ setup_sdk() {
     echo -e "\n${YELLOW}Building pezkuwi-sdk (Release mode)...${NC}"
     echo "This may take 15-30 minutes..."
 
-    # Build the node in release mode
-    cargo build --release
+    # Detect actual user for cargo build
+    ACTUAL_USER=${SUDO_USER:-$USER}
+    SDK_PATH="$SHARED_DIR/pezkuwi-sdk"
+
+    # Build the node in release mode as the actual user
+    echo "Building as user: $ACTUAL_USER"
+    su - $ACTUAL_USER -c "cd $SDK_PATH && source \$HOME/.cargo/env && cargo build --release"
 
     echo -e "${GREEN}✓ pezkuwi-sdk built successfully${NC}"
 }
@@ -252,11 +257,15 @@ setup_frontend() {
         cd DKSweb
     fi
 
+    # Detect actual user
+    ACTUAL_USER=${SUDO_USER:-$USER}
+    FRONTEND_PATH="$SHARED_DIR/DKSweb"
+
     echo -e "\n${YELLOW}Installing frontend dependencies...${NC}"
-    npm install
+    su - $ACTUAL_USER -c "cd $FRONTEND_PATH && npm install"
 
     echo -e "\n${YELLOW}Building frontend...${NC}"
-    npm run build
+    su - $ACTUAL_USER -c "cd $FRONTEND_PATH && npm run build"
 
     echo -e "${GREEN}✓ DKSweb frontend built successfully${NC}"
 }
